@@ -1,0 +1,12 @@
+# Allow public access to storage files
+RewriteEngine On
+
+# Make sure "storage" under public_html points to storage/app/public
+RewriteRule ^storage/(.*)$ storage/app/public/$1 [L]
+
+# If 403 still happens, explicitly allow access
+<Directory "/home/USERNAME/public_html/dev.khut.shop/storage/app/public">
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Require all granted
+</Directory>
