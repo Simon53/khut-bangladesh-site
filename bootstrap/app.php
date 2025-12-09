@@ -11,7 +11,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        // Use our custom CSRF middleware
+        $middleware->validateCsrfTokens(except: [
+            'pay-via-ajax',
+            'success*',
+            'cancel*',
+            'fail*',
+            'ipn*',
+            'checkout/pay',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

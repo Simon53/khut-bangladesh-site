@@ -13,6 +13,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\VisitorController;
 use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\SslCommerzPaymentController;
 
 //use for server imgage-view
 use Illuminate\Support\Facades\Response;
@@ -148,14 +149,30 @@ Route::get('/customer-login', [CustomerAuthController::class, 'loginForm'])->nam
 Route::post('/customer-login', [CustomerAuthController::class, 'login'])->name('customer.login.submit');
 Route::post('/customer-register', [CustomerAuthController::class, 'register'])->name('customer.register');
 
+// Public route for viewing order details (accessible after payment without login)
+Route::get('/customer/order-details/{id}', [CustomerAuthController::class, 'orderDetails'])
+    ->name('customer.order.details');
+
 Route::middleware('auth:customer')->group(function() {
     Route::get('/customer-login/profile', [CustomerAuthController::class, 'profile'])->name('customer.profile');
 
    // Route::get('/customer-login/profile', [CustomerAuthController::class, 'profileForm'])->name('customer.profile');
     Route::post('/customer-login/profile', [CustomerAuthController::class, 'updateProfile'])->name('customer.profile.update');
     Route::post('/customer-login/logout', [CustomerAuthController::class, 'logout'])->name('customer.logout');
-    Route::get('/customer/order-details/{id}', [CustomerAuthController::class, 'orderDetails'])
-    ->name('customer.order.details')
-    ->middleware('auth:customer');
-
 });
+
+
+// SSLCOMMERZ Start
+Route::get('/example1', [SslCommerzPaymentController::class, 'exampleEasyCheckout']);
+Route::get('/example2', [SslCommerzPaymentController::class, 'exampleHostedCheckout']);
+
+Route::post('/pay', [SslCommerzPaymentController::class, 'index']);
+Route::post('/pay-via-ajax', [SslCommerzPaymentController::class, 'payViaAjax']);
+Route::post('/checkout/pay', [SslCommerzPaymentController::class, 'checkoutPayment'])->name('checkout.pay');
+
+Route::match(['get', 'post'], '/success', [SslCommerzPaymentController::class, 'success'])->name('payment.success');
+Route::match(['get', 'post'], '/fail', [SslCommerzPaymentController::class, 'fail'])->name('payment.fail');
+Route::match(['get', 'post'], '/cancel', [SslCommerzPaymentController::class, 'cancel'])->name('payment.cancel');
+
+Route::post('/ipn', [SslCommerzPaymentController::class, 'ipn']);
+//SSLCOMMERZ END

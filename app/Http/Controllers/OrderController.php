@@ -20,11 +20,17 @@ class OrderController extends Controller
         $subtotal += $item['qty'] * $item['price'];
     }
 
-    // Determine delivery charge
-    $delivery = ($request->district == 'Dhaka') ? 80 : 150;
+    // Determine delivery charge based on postcode
+    $postcode = (int)$request->postcode;
+    $delivery = 150; // Default delivery charge
+    
+    // If postcode is 1000, 1100, or between 1203-1236, delivery charge is 80
+    if ($postcode == 1000 || $postcode == 1100 || ($postcode >= 1203 && $postcode <= 1236)) {
+        $delivery = 80;
+    }
 
-    // Determine order status
-    $status = ($request->payment_method == 'cod' && $request->district == 'Dhaka') ? 'pending' : 'paid';
+    // Determine order status - COD orders are pending until payment is received
+    $status = 'Pending';
 
     // ✅ Set delivery status for new orders
     $deliveryStatus = 'pending';
@@ -36,9 +42,11 @@ class OrderController extends Controller
         'email'      => $request->email,
         'phone'      => $request->phone,
         'address'    => $request->address,
+        'apartment'  => $request->apartment ?? null,
         'district'   => $request->district,
         'city'       => $request->city,
         'postcode'   => $request->postcode,
+        'country'    => $request->country ?? 'Bangladesh',
         'notes'      => $request->note ?? null,
         'payment_method' => $request->payment_method,
         'subtotal'   => $subtotal,
@@ -62,7 +70,12 @@ class OrderController extends Controller
         ]);
     }
 
-    return response()->json(['success'=>true, 'message'=>'Order placed successfully!']);
+    // Store order in session for success page
+    $request->session()->put('order', $order);
+    
+    // Clear cart from localStorage will be done on success page
+    // Redirect to success page with order ID
+    return redirect()->route('payment.success', ['order_id' => $order->id]);
 }
 
 }

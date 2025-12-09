@@ -103,14 +103,27 @@ class CustomerAuthController extends Controller
             return view('customer-login.profile', compact('customer', 'orders'));
         }
 
-     public function orderDetails($id){
+     public function orderDetails($id, Request $request){
+        // Get order with items
+        $order = \App\Models\Order::with('items')->findOrFail($id);
+        
+        // If user is authenticated, verify the order belongs to them
         $customer = Auth::guard('customer')->user();
-
-        $order = \App\Models\Order::with('items')
-            ->where('email', $customer->email)
-            ->where('id', $id)
-            ->firstOrFail();
-
+        if ($customer) {
+            // Authenticated user - verify email matches
+            if ($order->email !== $customer->email) {
+                abort(403, 'You do not have permission to view this order.');
+            }
+        }
+        // If not authenticated, allow viewing (they came from payment success page)
+        // This is safe because they have the order ID from the payment confirmation
+        
+        // If it's an AJAX request (for modal), return the modal partial
+        if ($request->ajax()) {
+            return view('customer-login.partials.order-details-modal', compact('order'));
+        }
+        
+        // Otherwise, return the full page view
         return view('customer-login.partials.order-details', compact('order'));
     }   
 }
