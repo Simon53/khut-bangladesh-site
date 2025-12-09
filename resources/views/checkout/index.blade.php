@@ -2,6 +2,18 @@
 
 @section('title', 'My Cart')
 @section('content')
+<style>
+    .is-invalid {
+        border-color: #dc3545 !important;
+    }
+    .invalid-feedback {
+        display: block;
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 0.875rem;
+        color: #dc3545;
+    }
+</style>
 <!-- ===== Checkout Section ===== -->
 <div class="container">
     <div class="row">
@@ -24,16 +36,19 @@
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label>First Name *</label>
-                                <input type="text" class="form-control billing-field" placeholder="First Name" required>
+                                <input type="text" class="form-control billing-field" id="billingFirstName" placeholder="First Name" required>
+                                <div class="invalid-feedback" id="errorFirstName" style="display: none;"></div>
                             </div>
                             <div class="form-group col-md-6">
                                 <label>Last Name *</label>
-                                <input type="text" class="form-control billing-field" placeholder="Last Name" required>
+                                <input type="text" class="form-control billing-field" id="billingLastName" placeholder="Last Name" required>
+                                <div class="invalid-feedback" id="errorLastName" style="display: none;"></div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label>Country *</label>
                             <select class="form-control billing-field" id="billingCountry" required>
+                                <option value="">Select Country...</option>
                                 <option value="">Select Country...</option>
                                 <option value="Bangladesh" selected>Bangladesh</option>
                                 <option value="Afghanistan">Afghanistan</option>
@@ -94,23 +109,26 @@
                                 <option value="United States">United States</option>
                                 <option value="Vietnam">Vietnam</option>
                             </select>
+                            <div class="invalid-feedback" id="errorCountry" style="display: none; color: #dc3545; font-size: 0.875rem;"></div>
                         </div>
                         <div class="form-group">
                             <label>Apartment address (optional)</label>
-                            <input type="text" class="form-control" placeholder="Apartment, suite, unit etc. (optional)">
+                            <input type="text" class="form-control" id="billingApartment" placeholder="Apartment, suite, unit etc. (optional)">
                         </div>
                         <div class="form-group">
                             <label>Street address *</label>
-                            <input type="text" class="form-control billing-field" placeholder="Building No. Flat No. Street No. etc." required>
+                            <input type="text" class="form-control billing-field" id="billingAddress" placeholder="Building No. Flat No. Street No. etc." required>
+                            <div class="invalid-feedback" id="errorAddress" style="display: none; color: #dc3545; font-size: 0.875rem;"></div>
                         </div>
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label>Town / City *</label>
-                                <input type="text" class="form-control billing-field" placeholder="Town / City" required>
+                                <input type="text" class="form-control billing-field" id="billingCity" placeholder="Town / City" required>
+                                <div class="invalid-feedback" id="errorCity" style="display: none; color: #dc3545; font-size: 0.875rem;"></div>
                             </div>
                             <div class="form-group col-md-4">
                                 <label>District *</label>
-                                <select class="form-control billing-field" required>
+                                <select class="form-control billing-field" id="billingDistrict" required>
                                     <option value="">Select your district...</option>
                                     <option value="Bagerhat">Bagerhat</option>
                                     <option value="Bandarban">Bandarban</option>
@@ -175,22 +193,26 @@
                                     <option value="Sunamganj">Sunamganj</option>
                                     <option value="Sylhet">Sylhet</option>
                                     <option value="Tangail">Tangail</option>
-                                    <option value="Thakurgaon">Thakurgaon</option>
+                                        <option value="Thakurgaon">Thakurgaon</option>
                                 </select>
+                                <div class="invalid-feedback" id="errorDistrict" style="display: none;"></div>
                             </div>
                             <div class="form-group col-md-2">
                                 <label>Postcode/ZIP *</label>
-                                <input type="text" class="form-control billing-field" placeholder="4-digit Number" required>
+                                <input type="text" class="form-control billing-field" id="billingPostcode" placeholder="4-digit Number" required>
+                                <div class="invalid-feedback" id="errorPostcode" style="display: none; color: #dc3545; font-size: 0.875rem;"></div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label>Phone *</label>
-                                <input type="text" class="form-control billing-field" placeholder="11-digit Number ei. 01xxxxxxxxx" required>
+                                <input type="text" class="form-control billing-field" id="billingPhone" placeholder="11-digit Number ei. 01xxxxxxxxx" required>
+                                <div class="invalid-feedback" id="errorPhone" style="display: none; color: #dc3545; font-size: 0.875rem;"></div>
                             </div>
                             <div class="form-group col-md-6">
                                 <label>Email address *</label>
-                                <input type="email" class="form-control billing-field" placeholder="example@email.com" required>
+                                <input type="email" class="form-control billing-field" id="billingEmail" placeholder="example@email.com" required>
+                                <div class="invalid-feedback" id="errorEmail" style="display: none; color: #dc3545; font-size: 0.875rem;"></div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -322,7 +344,7 @@
                         </div>
 
                         <div class="text-right">
-                            <button class="btn btn-secondary" type="button" onclick="nextTab('billing-tab')">Back</button>
+                        <button class="btn btn-secondary" type="button" onclick="nextTab('billing-tab')">Back</button>
                             <button class="btn btn-dark" type="button" onclick="validateAndNext('shipping', 'review-tab')">Next</button>
                         </div>
                     </form>
@@ -332,7 +354,7 @@
                 <div class="tab-pane fade" id="review" role="tabpanel">
                     <div id="orderSummary"></div>
                     <div class="text-right mt-3">
-                        <button class="btn btn-secondary" type="button" onclick="nextTab('shipping-tab')">Back</button>
+                    <button class="btn btn-secondary" type="button" onclick="nextTab('shipping-tab')">Back</button>
                         <button class="btn btn-dark" type="button" onclick="validateAndNext('review', 'payment-tab')">Next</button>
                     </div>
                 </div>
@@ -393,55 +415,129 @@
         tab.css({'pointer-events': 'auto', 'opacity': '1'});
     }
 
+    // Helper functions to show/hide error messages
+    function showError(fieldId, message) {
+        const errorDiv = $('#error' + fieldId);
+        if (errorDiv.length) {
+            errorDiv.text(message).css('display', 'block');
+            const inputField = $('#billing' + fieldId);
+            if (inputField.length) {
+                inputField.addClass('is-invalid');
+            } else {
+                // Fallback: try to find by placeholder or other selector
+                const fallbackField = $('#billing input, #billing select').filter(function() {
+                    return $(this).attr('id') && $(this).attr('id').includes(fieldId.toLowerCase());
+                });
+                if (fallbackField.length) {
+                    fallbackField.addClass('is-invalid');
+                }
+            }
+        }
+    }
+
+    function hideError(fieldId) {
+        const errorDiv = $('#error' + fieldId);
+        if (errorDiv.length) {
+            errorDiv.hide();
+            const inputField = $('#billing' + fieldId);
+            if (inputField.length) {
+                inputField.removeClass('is-invalid');
+            }
+        }
+    }
+
+    function clearAllErrors() {
+        $('.invalid-feedback').hide();
+        $('.is-invalid').removeClass('is-invalid');
+    }
+
     function validateBilling() {
-        // First check HTML5 validation
-        const billingForm = document.getElementById('billingForm');
-        if (!billingForm.checkValidity()) {
-            billingForm.reportValidity();
-            return false;
-        }
+        clearAllErrors();
+        let isValid = true;
 
-        // Get values using more specific selectors
-        const firstName = $("#billing input[placeholder='First Name']").val() || '';
-        const lastName = $("#billing input[placeholder='Last Name']").val() || '';
-        const email = $("#billing input[placeholder='example@email.com']").val() || '';
-        const phone = $("#billing input[placeholder*='01']").val() || '';
-        const address = $("#billing input[placeholder*='Building']").val() || '';
+        // Get values using IDs
+        const firstName = $("#billingFirstName").val() || '';
+        const lastName = $("#billingLastName").val() || '';
+        const email = $("#billingEmail").val() || '';
+        const phone = $("#billingPhone").val() || '';
+        const address = $("#billingAddress").val() || '';
         const country = $("#billingCountry").val() || '';
-        const district = $("#billing select.form-control.billing-field").val() || '';
-        const city = $("#billing input[placeholder='Town / City']").val() || '';
-        const postcode = $("#billing input[placeholder='4-digit Number']").val() || '';
+        const district = $("#billingDistrict").val() || '';
+        const city = $("#billingCity").val() || '';
+        const postcode = $("#billingPostcode").val() || '';
 
-        // Check if all required fields are filled
-        if (!firstName.trim() || !lastName.trim() || !email.trim() || !phone.trim() || 
-            !address.trim() || !country || country === 'Select Country...' ||
-            !district || district === 'Select your district...' || 
-            !city.trim() || !postcode.trim()) {
-            alert("Please fill in all required billing fields including Country.");
-            return false;
+        // Validate First Name
+        if (!firstName.trim()) {
+            showError('FirstName', 'First name is required.');
+            isValid = false;
         }
 
-        // Validate email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email.trim())) {
-            alert("Please enter a valid email address.");
-            return false;
+        // Validate Last Name
+        if (!lastName.trim()) {
+            showError('LastName', 'Last name is required.');
+            isValid = false;
         }
 
-        // Validate phone (should be 11 digits starting with 01)
-        const phoneClean = phone.replace(/\s/g, '');
-        if (!/^01\d{9}$/.test(phoneClean)) {
-            alert("Please enter a valid 11-digit phone number starting with 01.");
-            return false;
+        // Validate Email
+        if (!email.trim()) {
+            showError('Email', 'Email address is required.');
+            isValid = false;
+        } else {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.trim())) {
+                showError('Email', 'Please enter a valid email address.');
+                isValid = false;
+            }
         }
 
-        // Validate postcode (4 digits)
-        if (!/^\d{4}$/.test(postcode.trim())) {
-            alert("Please enter a valid 4-digit postcode.");
-            return false;
+        // Validate Phone
+        if (!phone.trim()) {
+            showError('Phone', 'Phone number is required.');
+            isValid = false;
+        } else {
+            const phoneClean = phone.replace(/\s/g, '');
+            if (!/^01\d{9}$/.test(phoneClean)) {
+                showError('Phone', 'Please enter a valid 11-digit phone number starting with 01.');
+                isValid = false;
+            }
         }
 
-        return true;
+        // Validate Address
+        if (!address.trim()) {
+            showError('Address', 'Street address is required.');
+            isValid = false;
+        }
+
+        // Validate Country
+        if (!country || country === 'Select Country...') {
+            showError('Country', 'Please select a country.');
+            isValid = false;
+        }
+
+        // Validate District
+        if (!district || district === 'Select your district...') {
+            showError('District', 'Please select a district.');
+            isValid = false;
+        }
+
+        // Validate City
+        if (!city.trim()) {
+            showError('City', 'Town/City is required.');
+            isValid = false;
+        }
+
+        // Validate Postcode
+        if (!postcode.trim()) {
+            showError('Postcode', 'Postcode is required.');
+            isValid = false;
+        } else {
+            if (!/^\d{4}$/.test(postcode.trim())) {
+                showError('Postcode', 'Please enter a valid 4-digit postcode.');
+                isValid = false;
+            }
+        }
+
+        return isValid;
     }
 
     function validateShipping() {
@@ -450,12 +546,13 @@
             return true;
         }
 
-        // If checked, validate shipping fields
-        const shippingForm = $("#shippingForm");
-        if (shippingForm[0].checkValidity()) {
+        // If checked, validate shipping fields using HTML5 validation
+        const shippingForm = document.getElementById("shippingForm");
+        if (shippingForm.checkValidity()) {
             return true;
         } else {
-            alert("Please fill in all required shipping fields.");
+            // Show HTML5 validation messages
+            shippingForm.reportValidity();
             return false;
         }
     }
@@ -463,7 +560,11 @@
     function validateReview() {
         const cart = JSON.parse(localStorage.getItem("cart")) || [];
         if (cart.length === 0) {
-            alert("Your cart is empty!");
+            // Show error in order summary area
+            const orderSummary = document.getElementById("orderSummary");
+            if (orderSummary) {
+                orderSummary.innerHTML = '<div class="alert alert-danger">Your cart is empty! Please add items to your cart before proceeding.</div>';
+            }
             return false;
         }
         return true;
@@ -645,7 +746,11 @@
  $(document).on("click", ".btn-success", function() {
     const cart = localStorage.getItem("cart");
     if (!cart || JSON.parse(cart).length === 0) {
-        alert("Your cart is empty!");
+        // Show error in payment section
+        $('#payment').prepend('<div class="alert alert-danger alert-dismissible fade show" role="alert">Your cart is empty! Please add items to your cart before placing an order.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+        setTimeout(function() {
+            $('.alert').fadeOut();
+        }, 5000);
         return;
     }
 
@@ -666,9 +771,17 @@
         cart: cart
     };
 
-    // Validate required fields
-    if (!form.first_name || !form.last_name || !form.email || !form.phone || !form.address || !form.district || !form.city || !form.postcode) {
-        alert("Please fill in all required fields.");
+    // Validate required fields - use the same validation function
+    if (!validateBilling()) {
+        // Scroll to first error
+        const firstError = $('.is-invalid').first();
+        if (firstError.length) {
+            $('html, body').animate({
+                scrollTop: firstError.offset().top - 100
+            }, 500);
+        }
+        // Switch to billing tab to show errors
+        nextTab('billing-tab');
         return;
     }
 
@@ -705,7 +818,7 @@
             paymentForm.submit();
         }, 100);
         return;
-    } else {
+            } else {
         // For COD and bKash, use existing order.store route
         // The route now redirects to success page, so we need to submit as form
         const orderForm = document.createElement('form');
